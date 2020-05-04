@@ -1,5 +1,5 @@
 body {
-	width: 300px;
+	width: 280px;
 	margin: 0 auto;
 	padding: 0;
 	background-color: white;
@@ -11,13 +11,34 @@ h1 { text-align: center; }
 	border: 2px solid black;
 }
 
+#userInfo {
+	width: 280px;
+}
+
+#userInfo #apple, #userInfo #trophy {
+	width: 100px;
+	height: 48px;
+	display: inline-block;
+	font-size: 40px;
+	position: relative;
+}
+
+#userInfo #trophy {
+	margin-left: 10px;
+}
+
+#userInfo #trophy span, #userInfo #apple span {
+	top: 4px;
+	position: absolute;
+}
+
 #gameCommands {
 	margin-top: 20px;
 }
 
 #buttons {
 	/*border: 1px solid black;*/
-	width: 300px;
+	width: 280px;
 	height: 140px;
 	position: relative;
 	display: block;

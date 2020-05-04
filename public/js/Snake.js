@@ -3,20 +3,24 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from './main.js';
 export class Snake {
 
 	#body = [];
-	#bodyPart = { height: 10, width: 10, x: 0, y: 0, color: 'black'};
+	#bodyPart = { height: 12, width: 12, x: 0, y: 0, color: 'black'};
 	#previousDirection = '';
 
 	constructor() {
 		this.#body = [
-			{ ...this.#bodyPart, x: 150, y: 150, color: 'purple' },
-			{ ...this.#bodyPart, x: 139, y: 150 },
-			{ ...this.#bodyPart, x: 128, y: 150 }
+			{ ...this.#bodyPart, x: 148, y: 148, color: 'purple' },
+			{ ...this.#bodyPart, x: 135, y: 148 },
+			{ ...this.#bodyPart, x: 121, y: 148 }
 		];
 	}
 
 	get body() {
 		return this.#body;
 	};
+
+	get previousDirection() {
+		return this.#previousDirection;
+	}
 
 	set previousDirection(direction) {
 		this.#previousDirection = direction;
@@ -28,54 +32,53 @@ export class Snake {
 	}
 
 	increaseSnakeBody = () => {
-		this.#body = [
-			...this.body,
+		this.#body.push(
 			{
 				...this.#bodyPart,
 				x: this.body[this.body.length-1].x - (this.#bodyPart.width + 1),
 				y: this.body[this.body.length-1].y
 			}
-		];
+		);
 	}
 
 	// colisão com as bordas da tela
 	#checkSnakePosition = () => {
-		if (this.#body[0].x > CANVAS_WIDTH) {
+		if (this.#body[0].x + this.#body[0].width > CANVAS_WIDTH) {
 			this.updateBodyPart(0, 0);
 		}
-		if (this.#body[0].x < 0) {
+		if (this.#body[0].x + this.#body[0].width < 0) {
 			this.updateBodyPart(0, CANVAS_WIDTH);
 		}
-		if (this.#body[0].y > CANVAS_HEIGHT) {
+		if (this.#body[0].y + this.#body[0].height > CANVAS_HEIGHT) {
 			this.updateBodyPart(0, null, 0);
 		}
-		if (this.#body[0].y < 0) {
+		if (this.#body[0].y + this.#body[0].height < 0) {
 			this.updateBodyPart(0, null, CANVAS_HEIGHT);
 		}
 	}
 
 	#moveToRight = (i) => {
 		this.previousDirection = 'right';
-		this.#body[i].x = i == 0 ? this.#body[i].x + 11 : this.#body[i-1].x;
+		this.#body[i].x = i == 0 ? this.#body[i].x + (this.#bodyPart.width + 1) : this.#body[i-1].x;
 		this.#body[i].y = i == 0 ? this.#body[i].y : this.#body[i-1].y;
 	}
 
 	#moveToLeft = (i) => {
 		this.previousDirection = 'left';
-		this.#body[i].x = i == 0 ? this.#body[i].x - 11 : this.#body[i-1].x;
+		this.#body[i].x = i == 0 ? this.#body[i].x - (this.#bodyPart.width + 1) : this.#body[i-1].x;
 		this.#body[i].y = i == 0 ? this.#body[i].y : this.#body[i-1].y;
 	}
 
 	#moveToUp = (i) => {
 		this.previousDirection = 'up';
 		this.#body[i].x = i == 0 ? this.#body[i].x : this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y - 11 : this.#body[i-1].y;
+		this.#body[i].y = i == 0 ? this.#body[i].y - (this.#bodyPart.height + 1): this.#body[i-1].y;
 	}
 
 	#moveToDown = (i) => {
 		this.previousDirection = 'down';
 		this.#body[i].x = i == 0 ? this.#body[i].x: this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y + 11 : this.#body[i-1].y;
+		this.#body[i].y = i == 0 ? this.#body[i].y + (this.#bodyPart.height + 1): this.#body[i-1].y;
 	}
 
 	updateSnakeMovement = (direction) => {
@@ -86,34 +89,39 @@ export class Snake {
 			switch (direction) {
 
 				case 'left': {
-					if (this.#previousDirection === 'right')
+					if (this.#previousDirection === 'right') {
 						this.#moveToRight(i);
-					else
+					} else {
 						this.#moveToLeft(i);
+					}
 					break;
 				}
 
 				case 'right': {
-					if (this.#previousDirection === 'left')
+					if (this.#previousDirection === 'left') {
+						console.log('left');
 						this.#moveToLeft(i);
-					else
+					} else {
 						this.#moveToRight(i);
+					}
 					break;
 				}
 
 				case 'up': {
-					if (this.#previousDirection === 'down')
+					if (this.#previousDirection === 'down') {
 						this.#moveToDown(i);
-					else
+					} else {
 						this.#moveToUp(i);
+					}
 					break;
 				}
 
 				case 'down': {
-					if (this.#previousDirection === 'up')
+					if (this.#previousDirection === 'up') {
 						this.#moveToUp(i);
-					else
+					} else {
 						this.#moveToDown(i);
+					}
 					break;
 				}
 			}
