@@ -1,0 +1,15 @@
+{
+  "name": "js-snake-game",
+  "version": "1.0.0",
+  "description": "Classic Snake game recreated in JavaScript",
+  "main": "app.js",
+  "scripts": {
+    "server": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Heliandro Lavôr",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

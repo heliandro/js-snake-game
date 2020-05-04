@@ -1,0 +1,41 @@
+body {
+	width: 300px;
+	margin: 0 auto;
+	padding: 0;
+	background-color: white;
+}
+
+h1 { text-align: center; }
+
+#screen {
+	border: 2px solid black;
+}
+
+#gameCommands {
+	margin-top: 20px;
+}
+
+#buttons {
+	/*border: 1px solid black;*/
+	width: 300px;
+	height: 140px;
+	position: relative;
+	display: block;
+}
+
+#buttons img {
+	width: 140px;
+	height: 140px;
+}
+
+#buttons #btnStart {
+	top: 45px;
+	right: 0px;
+	width: 120px;
+	height: 50px;
+	background-color: black;
+	color: white;
+	border-radius: 10px;
+	position: absolute;
+}
+

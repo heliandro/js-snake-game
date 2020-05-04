@@ -1,0 +1,6 @@
+# files
+package-lock.json
+
+# other
+/node_modules/
+/.idea
