@@ -99,7 +99,6 @@ export class Snake {
 
 				case 'right': {
 					if (this.#previousDirection === 'left') {
-						console.log('left');
 						this.#moveToLeft(i);
 					} else {
 						this.#moveToRight(i);
