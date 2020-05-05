@@ -27,9 +27,13 @@ export class Engine {
 		this.#gameSounds = new SoundEffects();
 		this.#gameInterface.drawStartScreen();
 
+
 		// game controls
 		globalThis.document.addEventListener('keydown', this.#keyboardKeyPressed);
-		this.#gameInterface.btnDpad.addEventListener('click', this.#btnDpadClick);
+		//this.#gameInterface.btnDpad.addEventListener('click', this.#btnDpadClick);
+		let touchEvent = new Hammer(this.#gameInterface.btnDpad);
+		touchEvent.on('tap', this.#btnDpadTouch);
+
 		this.#gameInterface.btnStart.addEventListener('click', this.#btnStartCkick)
 	}
 
@@ -41,23 +45,26 @@ export class Engine {
 		return this.#powerUpEaten;
 	}
 
-	#btnDpadClick = (event) => {
-		// console.log(event.layerX);
-		// console.log(event.layerY);
-		if (event.layerX >= 45 && event.layerX <= 95
-			&& event.layerY >= 0 && event.layerY <= 45) {
+	#btnDpadTouch = (event) => {
+		// console.log(event);
+		if (event.srcEvent.layerX >= 45 && event.srcEvent.layerX <= 95
+			&& event.srcEvent.layerY >= 0 && event.srcEvent.layerY <= 45
+		) {
 			this.#charDirection = 'up';
 			this.#gameSounds.reproduceSound('moviment');
-		} else if (event.layerX >= 45 && event.layerX <= 95
-			&& event.layerY >= 95 && event.layerY <= 140) {
+		} else if (event.srcEvent.layerX >= 45 && event.srcEvent.layerX <= 95
+			&& event.srcEvent.layerY >= 95 && event.srcEvent.layerY <= 140
+		) {
 			this.#charDirection = 'down';
 			this.#gameSounds.reproduceSound('moviment');
-		} else if (event.layerX >= 0 && event.layerX <= 45
-			&& event.layerY >= 45 && event.layerY <= 95) {
+		} else if (event.srcEvent.layerX >= 0 && event.srcEvent.layerX <= 45
+			&& event.srcEvent.layerY >= 45 && event.srcEvent.layerY <= 95
+		) {
 			this.#charDirection = 'left';
 			this.#gameSounds.reproduceSound('moviment');
-		} else if (event.layerX >= 95 && event.layerX <= 140
-			&& event.layerY >= 45 && event.layerY <= 95) {
+		} else if (event.srcEvent.layerX >= 95 && event.srcEvent.layerX <= 140
+			&& event.srcEvent.layerY >= 45 && event.srcEvent.layerY <= 95
+		) {
 			this.#charDirection = 'right';
 			this.#gameSounds.reproduceSound('moviment');
 		}
