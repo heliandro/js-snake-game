@@ -15,21 +15,34 @@ h1 { text-align: center; }
 	width: 280px;
 }
 
-#userInfo #apple, #userInfo #trophy {
-	width: 100px;
-	height: 48px;
+#userInfo #apple, #userInfo #score, #userInfo #speed {
+	width: 80px;
+	height: 32px;
 	display: inline-block;
-	font-size: 40px;
+	font-size: 30px;
 	position: relative;
+	box-sizing: border-box;
 }
 
-#userInfo #trophy {
-	margin-left: 10px;
+#userInfo #score {
+	width: 132px;
+	padding-left: 10px;
 }
 
-#userInfo #trophy span, #userInfo #apple span {
-	top: 4px;
+#userInfo #speed {
+	width: 60px;
+}
+
+#userInfo #apple img, #userInfo #score img, #userInfo #speed img {
+	height: 32px;
+	width: 32px;
+}
+
+#userInfo #score span, #userInfo #apple span, #userInfo #speed span {
+	top: 2px;
+	padding-left: 4px;
 	position: absolute;
+	box-sizing: border-box;
 }
 
 #gameCommands {

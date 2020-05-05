@@ -4,19 +4,27 @@ import { drawCharacter, drawPowerUp } from './draw.js';
 import { GameInterface } from './GameInterface.js';
 import { Snake } from './Snake.js';
 import { SoundEffects } from './SoundEffects.js';
+import { GameControls } from './GameControls.js';
 
 export class Engine {
 
+	// game running reference
 	#gameRef;
-	#firstEnter = true;
-	#isGamePaused = false;
-	#charDirection = 'none';
+	// character, object and enemy
 	#character;
 	#powerUp = [];
+	// scores
 	#score = 0;
 	#powerUpEaten = 0;
+	// engine variables control
+	#speed = 200; // 1000 = 1fps | 100 = 10fps
+	#charDirection = 'none';
+	#firstEnter = true;
+	#isGamePaused = false;
+	// extra
 	#gameInterface;
 	#gameSounds;
+	#gameControls;
 
 	constructor(context) {
 
@@ -26,99 +34,31 @@ export class Engine {
 		this.#gameInterface = new GameInterface(this.screen);
 		this.#gameSounds = new SoundEffects();
 		this.#gameInterface.drawStartScreen();
+		this.#gameControls = new GameControls();
 
+		globalThis.document.onkeydown = (event) => this.#gameControls.keyboardControlsFns
+			.bind(null, { execCommands: this.execCommands, event })();
 
-		// game controls
-		globalThis.document.addEventListener('keydown', this.#keyboardKeyPressed);
-		//this.#gameInterface.btnDpad.addEventListener('click', this.#btnDpadClick);
-		let touchEvent = new Hammer(this.#gameInterface.btnDpad);
-		touchEvent.on('tap', this.#btnDpadTouch);
+		const btnDpadHammerListener = new Hammer(this.#gameControls.btnDpad);
+		btnDpadHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns.bind(null, { execCommands: this.execCommands, event })());
 
-		this.#gameInterface.btnStart.addEventListener('click', this.#btnStartCkick)
+		const btnStartHammerListener = new Hammer(this.#gameControls.btnStart);
+		btnStartHammerListener.on('tap', (event) => this.#gameControls.btnStartFns.bind(null, { execCommands: this.execCommands, event })());
+
 	}
 
-	get score() {
-		return this.#score;
-	}
-
-	get powerUpEaten() {
-		return this.#powerUpEaten;
-	}
-
-	#btnDpadTouch = (event) => {
-		// console.log(event);
-		if (event.srcEvent.layerX >= 45 && event.srcEvent.layerX <= 95
-			&& event.srcEvent.layerY >= 0 && event.srcEvent.layerY <= 45
-		) {
-			this.#charDirection = 'up';
-			this.#gameSounds.reproduceSound('moviment');
-		} else if (event.srcEvent.layerX >= 45 && event.srcEvent.layerX <= 95
-			&& event.srcEvent.layerY >= 95 && event.srcEvent.layerY <= 140
-		) {
-			this.#charDirection = 'down';
-			this.#gameSounds.reproduceSound('moviment');
-		} else if (event.srcEvent.layerX >= 0 && event.srcEvent.layerX <= 45
-			&& event.srcEvent.layerY >= 45 && event.srcEvent.layerY <= 95
-		) {
-			this.#charDirection = 'left';
-			this.#gameSounds.reproduceSound('moviment');
-		} else if (event.srcEvent.layerX >= 95 && event.srcEvent.layerX <= 140
-			&& event.srcEvent.layerY >= 45 && event.srcEvent.layerY <= 95
-		) {
-			this.#charDirection = 'right';
-			this.#gameSounds.reproduceSound('moviment');
-		}
-	}
-
-	#btnStartCkick = (event) => {
-		event.preventDefault();
-		if (this.#firstEnter) {
-			this.#charDirection = 'right';
-			this.#firstEnter = false;
-			this.startGame();
-		} else if (this.#isGamePaused) {
-			this.resumeGame();
+	execCommands = (args) => {
+		if (args.code.includes('space')) {
+			if (this.#firstEnter) {
+				this.restartGame();
+			} else if (this.#isGamePaused) {
+				this.resumeGame();
+			} else {
+				this.stopGame();
+			}
 		} else {
-			this.stopGame();
-		}
-	}
-
-	#keyboardKeyPressed = (event) => {
-		switch (event.code) {
-			case 'ArrowLeft': {
-				this.#charDirection = 'left';
-				this.#gameSounds.reproduceSound('moviment');
-				break;
-			}
-			case 'ArrowRight': {
-				this.#charDirection = 'right';
-				this.#gameSounds.reproduceSound('moviment');
-				break;
-			}
-			case 'ArrowUp': {
-				this.#charDirection = 'up'
-				this.#gameSounds.reproduceSound('moviment');
-				break;
-			}
-			case 'ArrowDown': {
-				this.#charDirection = 'down';
-				this.#gameSounds.reproduceSound('moviment');
-				break;
-			}
-			case 'Space': {
-				if (this.#firstEnter) {
-					this.#charDirection = 'right';
-					this.#firstEnter = false;
-					this.startGame();
-				} else if (this.#isGamePaused) {
-					this.resumeGame();
-				} else {
-					this.stopGame();
-				}
-			}
-			default: {
-				//alert('Use as setinhas.');
-			}
+			this.#charDirection = args.code;
+			this.#gameSounds.reproduceSound('moviment');
 		}
 	}
 
@@ -134,56 +74,76 @@ export class Engine {
 		return false;
 	}
 
-	#levelUp = (character) => {
-		character.increaseSnakeBody();
-		this.#score += this.score > 2000 ? 84 : 42;
+	#updateDifficulty = () => {
+		if ((this.#score % 500 === 0) && this.#speed >= 60) {
+			this.#speed -= 10;
+			// clean setInterval and start new setInterval for update speed
+			clearInterval(this.#gameRef);
+			this.startGame();
+			this.#gameInterface.updatePageField('speed', this.#speed);
+		}
+	}
+
+	#levelUp = () => {
+		this.#character.increaseSnakeBody();
+		this.#score += this.#score >= 2000 ? 200 : 100;
 		this.#powerUpEaten += 1;
-		this.#gameInterface.updatePageField('apple', this.powerUpEaten);
-		this.#gameInterface.updatePageField('score', this.score);
+		this.#updateDifficulty();
+		this.#gameInterface.updatePageField('apple', this.#powerUpEaten);
+		this.#gameInterface.updatePageField('score', this.#score);
 	}
 
 	#redrawScreen = (character, powerUp, enemy) => {
-		// draw snake and apple
+
+		// Draw snake and apple
 		powerUp.forEach((object, index) => drawPowerUp(this.screen, object, index));
 		character.body.forEach((partOfBody, index) => drawCharacter(this.screen, partOfBody, index));
 
-		// PowerUP
+		// Recreates the apple if it was eaten
 		if (powerUp.length === 0) {
 			powerUp.push(new PowerUp());
 		}
 
-		// Test Collision => snake and powerUp
+		// Test the collision of the snake's head on power-up
 		if (this.#testCollision(character.body[0], powerUp[0])) {
 			this.#gameSounds.reproduceSound('apple-crunch');
 			powerUp.pop();
-			this.#levelUp(character);
+			this.#levelUp();
 		}
-		// test collision => snake head and snake body
+
+		// Test the collision of the snake's head on her body
 		if(character.body.some((partOfBody, index) => index > 0 && this.#testCollision(character.body[0], partOfBody))) {
-			this.resetGame();
+			this.gameOver();
 		} else {
 			character.updateSnakeMovement(this.#charDirection);
 		}
 	}
 
-	resetGame = () => {
+	gameOver = () => {
 		this.stopGame();
 		this.#gameInterface.drawGameOverScreen();
-		this.#score = 0;
-		this.#powerUpEaten = 0;
+		this.#firstEnter = true;
+	}
+
+	restartGame = () => {
 		this.#character = new Snake();
 		this.#powerUp = [new PowerUp()];
-		this.#firstEnter = true;
-		this.#isGamePaused = false;
-		this.#charDirection = 'none';
+		this.#score = 0;
+		this.#powerUpEaten = 0;
 		this.#gameInterface.resetPageFields();
+		this.#firstEnter = false;
+		this.#isGamePaused = false;
+		this.#charDirection = 'right';
+		this.#speed = 200;
+		this.#gameInterface.updatePageField('speed', this.#speed);
+		this.startGame();
 	}
 
 	startGame = () => {
 		this.#gameRef = setInterval(() => {
 			this.#gameInterface.clearScreenToGameAction();
 			this.#redrawScreen(this.#character, this.#powerUp);
-		}, 150); // 1000 = 1fps
+		}, this.#speed);
 	}
 
 	stopGame = () => {

@@ -4,34 +4,30 @@ export class GameInterface {
 
 	#appleField;
 	#scoreField;
-	#btnDpad;
-	#btnStart
+	#speedField;
 
 	constructor(screen) {
 		this.screen = screen;
 		this.#appleField = document.querySelector('#userInfo #apple span');
-		this.#scoreField = document.querySelector('#userInfo #trophy span');
-		this.#btnDpad = document.querySelector('#gameCommands #buttons #btnDpad');
-		this.#btnStart = document.querySelector('#gameCommands #buttons #btnStart');
-	}
-
-	get btnDpad() {
-		return this.#btnDpad;
-	}
-
-	get btnStart() {
-		return this.#btnStart;
+		this.#scoreField = document.querySelector('#userInfo #score span');
+		this.#speedField = document.querySelector('#userInfo #speed span');
 	}
 
 	updatePageField(field, value) {
 		if (field.includes('apple'))
 			this.#appleField.innerText = value;
-		else
+		else if (field.includes('score'))
 			this.#scoreField.innerText = value;
+		else {
+			// speed conversion
+			let speedText = Math.round((200 - value) * 5 / 100);
+			this.#speedField.innerText = speedText;
+		}
 	}
 
 	resetPageFields() {
 		this.#appleField.innerText = 0;
+		this.#scoreField.innerText = 0;
 		this.#scoreField.innerText = 0;
 	}
 
