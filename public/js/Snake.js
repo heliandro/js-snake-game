@@ -3,14 +3,14 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from './main.js';
 export class Snake {
 
 	#body = [];
-	#bodyPart = { height: 12, width: 12, x: 0, y: 0, color: 'black'};
+	#bodyPart = { height: 10, width: 10, x: 0, y: 0, color: 'black'};
 	#previousDirection = '';
 
 	constructor() {
 		this.#body = [
-			{ ...this.#bodyPart, x: 148, y: 148, color: 'purple' },
-			{ ...this.#bodyPart, x: 135, y: 148 },
-			{ ...this.#bodyPart, x: 121, y: 148 }
+			{ ...this.#bodyPart, x: 140, y: 140, color: 'purple' },
+			{ ...this.#bodyPart, x: 128, y: 140 },
+			{ ...this.#bodyPart, x: 116, y: 140 }
 		];
 	}
 
@@ -35,7 +35,7 @@ export class Snake {
 		this.#body.push(
 			{
 				...this.#bodyPart,
-				x: this.body[this.body.length-1].x - (this.#bodyPart.width + 1),
+				x: this.body[this.body.length-1].x - (this.#bodyPart.width + 2),
 				y: this.body[this.body.length-1].y
 			}
 		);
@@ -59,26 +59,26 @@ export class Snake {
 
 	#moveToRight = (i) => {
 		this.previousDirection = 'right';
-		this.#body[i].x = i == 0 ? this.#body[i].x + (this.#bodyPart.width + 1) : this.#body[i-1].x;
+		this.#body[i].x = i == 0 ? this.#body[i].x + (this.#bodyPart.width + 2) : this.#body[i-1].x;
 		this.#body[i].y = i == 0 ? this.#body[i].y : this.#body[i-1].y;
 	}
 
 	#moveToLeft = (i) => {
 		this.previousDirection = 'left';
-		this.#body[i].x = i == 0 ? this.#body[i].x - (this.#bodyPart.width + 1) : this.#body[i-1].x;
+		this.#body[i].x = i == 0 ? this.#body[i].x - (this.#bodyPart.width + 2) : this.#body[i-1].x;
 		this.#body[i].y = i == 0 ? this.#body[i].y : this.#body[i-1].y;
 	}
 
 	#moveToUp = (i) => {
 		this.previousDirection = 'up';
 		this.#body[i].x = i == 0 ? this.#body[i].x : this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y - (this.#bodyPart.height + 1): this.#body[i-1].y;
+		this.#body[i].y = i == 0 ? this.#body[i].y - (this.#bodyPart.height + 2): this.#body[i-1].y;
 	}
 
 	#moveToDown = (i) => {
 		this.previousDirection = 'down';
 		this.#body[i].x = i == 0 ? this.#body[i].x: this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y + (this.#bodyPart.height + 1): this.#body[i-1].y;
+		this.#body[i].y = i == 0 ? this.#body[i].y + (this.#bodyPart.height + 2): this.#body[i-1].y;
 	}
 
 	updateSnakeMovement = (direction) => {
