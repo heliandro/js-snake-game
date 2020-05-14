@@ -114,10 +114,10 @@ export class Engine {
 
 		// Test the collision of the snake and wall
 		if(
-			character.body[0].x + character.body[0].width > CANVAS_WIDTH - this.#gameInterface.square
-			|| character.body[0].x + character.body[0].width <= this.#gameInterface.square
-			|| character.body[0].y + character.body[0].height > CANVAS_HEIGHT - this.#gameInterface.square
-			|| character.body[0].y + character.body[0].height <= this.#gameInterface.square
+			character.body[0].x + character.body[0].width > CANVAS_WIDTH
+			|| character.body[0].x + character.body[0].width <= 0
+			|| character.body[0].y + character.body[0].height > CANVAS_HEIGHT
+			|| character.body[0].y + character.body[0].height <= 0
 		) {
 			this.gameOver();
 		}

@@ -6,7 +6,7 @@ export class GameInterface {
 	#scoreField;
 	#speedField;
 	square = 20;
-	#canvasSize = 14;
+	#canvasSize = 16;
 
 	constructor(screen) {
 		this.screen = screen;
@@ -57,8 +57,8 @@ export class GameInterface {
 		this.screen.fillStyle = 'darkseagreen';
 
 		this.screen.fillRect(
-			this.square,
-			this.square,
+			0,//this.square,
+			0,//this.square,
 			this.#canvasSize * this.square - this.square,
 			this.#canvasSize * this.square - this.square
 		);
