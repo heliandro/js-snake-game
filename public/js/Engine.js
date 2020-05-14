@@ -29,9 +29,10 @@ export class Engine {
 	constructor(context) {
 
 		this.screen = context;
-		this.#character = new Snake();
-		this.#powerUp = [new PowerUp()];
 		this.#gameInterface = new GameInterface(this.screen);
+		this.square = this.#gameInterface.square;
+		this.#character = new Snake(this.square);
+		this.#powerUp = [new PowerUp(this.square)];
 		this.#gameSounds = new SoundEffects();
 		this.#gameInterface.drawStartScreen();
 		this.#gameControls = new GameControls();
@@ -64,10 +65,10 @@ export class Engine {
 
 	#testCollision = (character, object) => {
 		if (
-			(character.x <= object.x + object.width) &&
-			(object.x <= character.x + character.width) &&
-			(character.y <= object.y + object.height) &&
-			(object.y <= character.y + character.height)
+			(character.x <= object.x + object.width - 1) &&
+			(object.x <= character.x + character.width - 1) &&
+			(character.y <= object.y + object.height - 1) &&
+			(object.y <= character.y + character.height - 1)
 		) {
 			return true;
 		}
@@ -101,7 +102,7 @@ export class Engine {
 
 		// Recreates the apple if it was eaten
 		if (powerUp.length === 0) {
-			powerUp.push(new PowerUp());
+			powerUp.push(new PowerUp(this.square));
 		}
 
 		// Test the collision of the snake's head on power-up
@@ -109,6 +110,16 @@ export class Engine {
 			this.#gameSounds.reproduceSound('apple-crunch');
 			powerUp.pop();
 			this.#levelUp();
+		}
+
+		// Test the collision of the snake and wall
+		if(
+			character.body[0].x + character.body[0].width > CANVAS_WIDTH - this.#gameInterface.square
+			|| character.body[0].x + character.body[0].width <= this.#gameInterface.square
+			|| character.body[0].y + character.body[0].height > CANVAS_HEIGHT - this.#gameInterface.square
+			|| character.body[0].y + character.body[0].height <= this.#gameInterface.square
+		) {
+			this.gameOver();
 		}
 
 		// Test the collision of the snake's head on her body

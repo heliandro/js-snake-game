@@ -1,17 +1,29 @@
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from './main.js';
+import { GameInterface } from './GameInterface.js';
 
 export class PowerUp {
 
-	constructor(x = 0, y = 0, color = 'orange') {
+	constructor(size = 20, color = 'orange') {
 
 		this.color = color;
-		this.width = 10;
-		this.height = 10;
+		this.width = size;
+		this.height = size;
 
-		let jump = (CANVAS_WIDTH / 10);
-		this.x = (Math.random() * CANVAS_WIDTH)  + jump;
-		this.x = this.x > CANVAS_WIDTH - jump ? CANVAS_WIDTH - jump : this.x;
-		this.y = (Math.random() * CANVAS_HEIGHT)  + jump;
-		this.y = this.y > CANVAS_HEIGHT - jump ? CANVAS_HEIGHT - jump : this.y;
+		// normal way
+		// let max = (CANVAS_WIDTH/20) + 1;
+		// this.x = this.width * (Math.floor(Math.random()) * max);
+		// this.y = this.height * (Math.floor(Math.random()) * max);
+
+		let random;
+
+		random = Math.random() * (CANVAS_WIDTH - this.width);
+		const jumpX = random - (random % this.width);
+		this.x = jumpX == 0 ? jumpX + this.width : jumpX;
+
+		random = Math.random() * (CANVAS_HEIGHT - this.height);
+		const jumpY = random - (random % this.height);
+		this.y = jumpY == 0 ? jumpY + this.height : jumpY;
+
+		//console.log(`randomX: ${jumpX} | randomY: ${jumpY} | x: ${this.x} | y: ${this.y}`);
 	}
 }

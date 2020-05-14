@@ -5,6 +5,8 @@ export class GameInterface {
 	#appleField;
 	#scoreField;
 	#speedField;
+	square = 20;
+	#canvasSize = 14;
 
 	constructor(screen) {
 		this.screen = screen;
@@ -42,18 +44,37 @@ export class GameInterface {
 	}
 
 	clearScreenToDefault = () => {
+		this.screen.fillStyle = 'burlywood';
 		this.screen.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-		this.screen.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		this.screen.fillRect(
+			0,
+			0,
+			CANVAS_WIDTH,
+			CANVAS_HEIGHT
+		);
+		this.screen.save();
+
+		this.screen.fillStyle = 'darkseagreen';
+
+		this.screen.fillRect(
+			this.square,
+			this.square,
+			this.#canvasSize * this.square - this.square,
+			this.#canvasSize * this.square - this.square
+		);
+
+		this.screen.restore();
 	}
 
 	clearScreenToGameAction = () => {
 		this.clearScreenToDefault();
-		this.screen.fillStyle = 'darkseagreen';
+		// this.screen.fillStyle = 'darkseagreen';
 	}
 
 	drawGameOverScreen() {
 		this.screen.fillStyle = 'black';
-		this.clearScreenToDefault();
+		this.screen.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		this.screen.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 		this.screen.save();
 
 		this.screen.font = '30px Arial';
