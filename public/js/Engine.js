@@ -40,12 +40,24 @@ export class Engine {
 		globalThis.document.onkeydown = (event) => this.#gameControls.keyboardControlsFns
 			.bind(null, { execCommands: this.execCommands, event })();
 
-		const btnDpadHammerListener = new Hammer(this.#gameControls.btnDpad);
-		btnDpadHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns.bind(null, { execCommands: this.execCommands, event })());
+		const btnStartHammerListener = new Hammer(this.#gameControls.canvas);
+		btnStartHammerListener.on('tap', () => this.#gameControls.btnStartFns.call(null, { execCommands: this.execCommands }));
 
-		const btnStartHammerListener = new Hammer(this.#gameControls.btnStart);
-		btnStartHammerListener.on('tap', (event) => this.#gameControls.btnStartFns.bind(null, { execCommands: this.execCommands, event })());
+		const btnTopHammerListener = new Hammer(this.#gameControls.btnTop);
+		btnTopHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
+			.call(null, { type: 'up', execCommands: this.execCommands }));
 
+		const btnLeftHammerListener = new Hammer(this.#gameControls.btnLeft);
+		btnLeftHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
+			.call(null, { type: 'left', execCommands: this.execCommands }));
+
+		const btnRightHammerListener = new Hammer(this.#gameControls.btnRight);
+		btnRightHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
+			.call(null, { type: 'right', execCommands: this.execCommands }));
+
+		const btnBottomHammerListener = new Hammer(this.#gameControls.btnBottom);
+		btnBottomHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
+			.call(null, { type: 'down', execCommands: this.execCommands }));
 	}
 
 	execCommands = (args) => {
@@ -75,9 +87,18 @@ export class Engine {
 		return false;
 	}
 
+	#testWallCollision = (character) => {
+		return (
+			character.body[0].x + character.body[0].width > CANVAS_WIDTH
+			|| character.body[0].x + character.body[0].width <= 0
+			|| character.body[0].y + character.body[0].height > CANVAS_HEIGHT
+			|| character.body[0].y + character.body[0].height <= 0
+		);
+	}
+
 	#updateDifficulty = () => {
-		if ((this.#score % 500 === 0) && this.#speed >= 60) {
-			this.#speed -= 10;
+		if ((this.#score % 1000 === 0) && this.#speed >= 60) {
+			this.#speed -= 20;
 			// clean setInterval and start new setInterval for update speed
 			clearInterval(this.#gameRef);
 			this.startGame();
@@ -112,22 +133,19 @@ export class Engine {
 			this.#levelUp();
 		}
 
-		// Test the collision of the snake and wall
+		// Test the collision
 		if(
-			character.body[0].x + character.body[0].width > CANVAS_WIDTH
-			|| character.body[0].x + character.body[0].width <= 0
-			|| character.body[0].y + character.body[0].height > CANVAS_HEIGHT
-			|| character.body[0].y + character.body[0].height <= 0
+			// collision of the snake and wall
+			this.#testWallCollision(character) ||
+			// collision of the snake's head on her body
+			(character.body.some((partOfBody, index) =>
+				index > 0 && this.#testCollision(character.body[0], partOfBody))
+			)
 		) {
 			this.gameOver();
 		}
 
-		// Test the collision of the snake's head on her body
-		if(character.body.some((partOfBody, index) => index > 0 && this.#testCollision(character.body[0], partOfBody))) {
-			this.gameOver();
-		} else {
-			character.updateSnakeMovement(this.#charDirection);
-		}
+		character.updateSnakeMovement(this.#charDirection);
 	}
 
 	gameOver = () => {

@@ -39,7 +39,7 @@ export class GameInterface {
 		this.screen.textAlign = 'center';
 		this.screen.fillText('SNAKE GAME', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
 		this.screen.font = '14px Arial';
-		this.screen.fillText('> Press Start <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
+		this.screen.fillText('> Press Space OR Touch <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
 		this.screen.restore();
 	}
 
@@ -82,7 +82,7 @@ export class GameInterface {
 		this.screen.textAlign = 'center';
 		this.screen.fillText('Game Over', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
 		this.screen.font = '14px Arial';
-		this.screen.fillText('> press start to continue... <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
+		this.screen.fillText('> press Space OR Touch to continue... <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
 
 		this.screen.restore();
 	}

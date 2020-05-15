@@ -1,32 +1,38 @@
 export class GameControls {
 
 	constructor() {
-		this.btnDpad = document.querySelector('#gameCommands #buttons #btnDpad');
-		this.btnStart = document.querySelector('#gameCommands #buttons #btnStart');
+		this.canvas = document.querySelector('#screen');
+		this.btnTop = document.querySelector('#gameCommands .btnTop .btn');
+		this.btnLeft = document.querySelector('#gameCommands .btnsLeftAndRight .btn:first-of-type');
+		this.btnRight = document.querySelector('#gameCommands .btnsLeftAndRight .btn:last-of-type');
+		this.btnBottom = document.querySelector('#gameCommands .btnBottom .btn');
 	}
 
 	btnDpadFns = (args) => {
-		if (args.event.srcEvent.layerX >= 45 && args.event.srcEvent.layerX <= 95
-			&& args.event.srcEvent.layerY >= 0 && args.event.srcEvent.layerY <= 45
-		) {
-			args.execCommands.bind(null, { code: 'up' })();
-		} else if (args.event.srcEvent.layerX >= 45 && args.event.srcEvent.layerX <= 95
-			&& args.event.srcEvent.layerY >= 95 && args.event.srcEvent.layerY <= 140
-		) {
-			args.execCommands.bind(null, { code: 'down' })();
-		} else if (args.event.srcEvent.layerX >= 0 && args.event.srcEvent.layerX <= 45
-			&& args.event.srcEvent.layerY >= 45 && args.event.srcEvent.layerY <= 95
-		) {
-			args.execCommands.bind(null, { code: 'left' })();
-		} else if (args.event.srcEvent.layerX >= 95 && args.event.srcEvent.layerX <= 140
-			&& args.event.srcEvent.layerY >= 45 && args.event.srcEvent.layerY <= 95
-		) {
-			args.execCommands.bind(null, { code: 'right' })();
+		switch (args.type) {
+			case 'up': {
+				args.execCommands.bind(null, { code: 'up' })();
+				break;
+			}
+			case 'left': {
+				args.execCommands.bind(null, { code: 'left' })();
+				break;
+			}
+			case 'right': {
+				args.execCommands.bind(null, { code: 'right' })();
+				break;
+			}
+			case 'down': {
+				args.execCommands.bind(null, { code: 'down' })();
+				break;
+			}
+			default: {
+				// ...
+			}
 		}
 	}
 
 	btnStartFns = (args) => {
-		args.event.preventDefault();
 		args.execCommands.bind(null, { code: 'space' })();
 	}
 

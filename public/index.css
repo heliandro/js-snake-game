@@ -1,5 +1,5 @@
 body {
-	width: 280px;
+	width: 304px;
 	margin: 0 auto;
 	padding: 0;
 	background-color: white;
@@ -12,64 +12,84 @@ h1 { text-align: center; }
 }
 
 #userInfo {
-	width: 280px;
+	display: grid;
+	/*grid-column-gap: 10px;*/
+	grid-template-columns: auto 140px auto;
 }
 
-#userInfo #apple, #userInfo #score, #userInfo #speed {
-	width: 80px;
-	height: 32px;
-	display: inline-block;
-	font-size: 30px;
-	position: relative;
-	box-sizing: border-box;
+.grid {
+	display: grid;
+	grid-template-columns: 32px calc(100% - 32px);
+	justify-content: center;
 }
 
-#userInfo #score {
-	width: 132px;
-	padding-left: 10px;
+.grid-item {
+	padding-bottom: 0;
 }
 
-#userInfo #speed {
-	width: 60px;
-}
-
-#userInfo #apple img, #userInfo #score img, #userInfo #speed img {
-	height: 32px;
+img.grid-item {
+	height: 34px;
 	width: 32px;
+	display: inline-block;
 }
 
-#userInfo #score span, #userInfo #apple span, #userInfo #speed span {
-	top: 2px;
-	padding-left: 4px;
-	position: absolute;
-	box-sizing: border-box;
+span.grid-item {
+	padding-left: 5px;
+	padding-top: 2px;
+	font-size: 30px;
+	display: inline-block;
 }
 
 #gameCommands {
-	margin-top: 20px;
+	/*margin-top: 20px;*/
+	display: grid;
+	/*grid-column-gap: 20px;*/
+	grid-template-columns: 100%;
+	justify-content: center;
+	/*border: 1px solid red;*/
 }
 
-#buttons {
+.btnTop, .btnsLeftAndRight, .btnBottom {
+	height: 55px;
+	min-width: 60px;
+	margin-top: 6px;
 	/*border: 1px solid black;*/
-	width: 280px;
-	height: 140px;
-	position: relative;
-	display: block;
 }
 
-#buttons img {
-	width: 140px;
-	height: 140px;
+.btnsLeftAndRight {
+	height: 70px;
 }
 
-#buttons #btnStart {
-	top: 45px;
-	right: 0px;
-	width: 120px;
-	height: 50px;
+.btnTop {
+	display: grid;
+	grid-template-columns: 50%;
+	justify-content: center;
+	/*border: 1px solid darkgreen;*/
+}
+
+.btnsLeftAndRight {
+	margin: 10px 0;
+	display: grid;
+	grid-template-columns: 40% 20% 40%;
+	justify-content: center;
+	/*border: 1px solid darkgreen;*/
+}
+
+.btnBottom {
+	display: grid;
+	grid-template-columns: 50%;
+	justify-content: center;
+	/*border: 1px solid darkgreen;*/
+}
+
+.btn {
+	height: inherit;
+	/*border: 1px solid hotpink;*/
 	background-color: black;
-	color: white;
-	border-radius: 10px;
-	position: absolute;
+	border-radius: 20px;
+}
+
+.btnsLeftAndRight .btn {
+	height: 70px;
 }
 

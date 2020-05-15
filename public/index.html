@@ -13,33 +13,39 @@
 
 	<div id="userInfo">
 		<div id="apple">
-			<img src="./images/apple.png" alt="apple">
-			<span>0</span>
+			<div class="grid">
+				<img src="./images/apple.png" alt="apple" class="grid-item">
+				<span class="grid-item">0</span>
+			</div>
 		</div>
 		<div id="score">
-			<img src="./images/star.png" alt="star">
-			<span>0</span>
+			<div class="grid">
+				<img src="./images/star.png" alt="star" class="grid-item">
+				<span class="grid-item">0</span>
+			</div>
 		</div>
 		<div id="speed">
-			<img src="./images/speed.png" alt="speed">
-			<span>0</span>
+			<div class="grid">
+				<img src="./images/speed.png" alt="speed" class="grid-item">
+				<span class="grid-item">0</span>
+			</div>
 		</div>
 	</div>
 
 	<canvas id="screen" height="300" width="300"></canvas>
 
 	<div id="gameCommands">
-		<div id="buttons">
-			<img id="btnDpad" src="./images/dpad.png" alt="dpad">
-			<button id="btnStart">Start/Stop</button>
+		<div class="btnTop">
+			<div class="btn"></div>
 		</div>
-<!--		<ul>-->
-<!--			<li>Arrow left: LEFT</li>-->
-<!--			<li>Arrow top: TOP</li>-->
-<!--			<li>Arrow right: RIGHT</li>-->
-<!--			<li>Arrow down: DOWN</li>-->
-<!--			<li>Space: START/PAUSE GAME</li>-->
-<!--		</ul>-->
+		<div class="btnsLeftAndRight">
+			<div class="btn"></div>
+			<div></div>
+			<div class="btn"></div>
+		</div>
+		<div class="btnBottom">
+			<div class="btn"></div>
+		</div>
 	</div>
 	<script src="/libs/hammer.min.js"></script>
 	<script type="module" src="/js/main.js"></script>
