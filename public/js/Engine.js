@@ -1,5 +1,5 @@
 import { PowerUp } from './PowerUp.js';
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from './main.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, BOX } from './main.js';
 import { drawCharacter, drawPowerUp } from './draw.js';
 import { GameInterface } from './GameInterface.js';
 import { Snake } from './Snake.js';
@@ -17,7 +17,7 @@ export class Engine {
 	#score = 0;
 	#powerUpEaten = 0;
 	// engine variables control
-	#speed = 200; // 1000 = 1fps | 100 = 10fps
+	#speed = 180; // 1000 = 1fps | 100 = 10fps
 	#charDirection = 'none';
 	#firstEnter = true;
 	#isGamePaused = false;
@@ -39,25 +39,6 @@ export class Engine {
 
 		globalThis.document.onkeydown = (event) => this.#gameControls.keyboardControlsFns
 			.bind(null, { execCommands: this.execCommands, event })();
-
-		const btnStartHammerListener = new Hammer(this.#gameControls.canvas);
-		btnStartHammerListener.on('tap', () => this.#gameControls.btnStartFns.call(null, { execCommands: this.execCommands }));
-
-		const btnTopHammerListener = new Hammer(this.#gameControls.btnTop);
-		btnTopHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
-			.call(null, { type: 'up', execCommands: this.execCommands }));
-
-		const btnLeftHammerListener = new Hammer(this.#gameControls.btnLeft);
-		btnLeftHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
-			.call(null, { type: 'left', execCommands: this.execCommands }));
-
-		const btnRightHammerListener = new Hammer(this.#gameControls.btnRight);
-		btnRightHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
-			.call(null, { type: 'right', execCommands: this.execCommands }));
-
-		const btnBottomHammerListener = new Hammer(this.#gameControls.btnBottom);
-		btnBottomHammerListener.on('tap', (event) => this.#gameControls.btnDpadFns
-			.call(null, { type: 'down', execCommands: this.execCommands }));
 	}
 
 	execCommands = (args) => {
@@ -87,17 +68,29 @@ export class Engine {
 		return false;
 	}
 
+	#testCollisionWithMySelf = (character) => {
+		// collision of the snake's head on her body
+		let isCollided = false;
+		for (let index = character.body.length - 1; index >= 0; index--) {
+			if (index > 2 && this.#testCollision(character.body[0], character.body[index])) {
+				isCollided = true;
+				break;
+			}
+		}
+		return isCollided;
+	}
+
 	#testWallCollision = (character) => {
 		return (
-			character.body[0].x + character.body[0].width > CANVAS_WIDTH
-			|| character.body[0].x + character.body[0].width <= 0
-			|| character.body[0].y + character.body[0].height > CANVAS_HEIGHT
-			|| character.body[0].y + character.body[0].height <= 0
+			(character.body[0].x + BOX) > CANVAS_WIDTH
+			|| (character.body[0].x + BOX) <= 0
+			|| (character.body[0].y + BOX) > CANVAS_HEIGHT
+			|| (character.body[0].y + BOX) <= 0
 		);
 	}
 
 	#updateDifficulty = () => {
-		if ((this.#score % 1000 === 0) && this.#speed >= 60) {
+		if ((this.#powerUpEaten % 10 === 0) && this.#speed >= 60) {
 			this.#speed -= 20;
 			// clean setInterval and start new setInterval for update speed
 			clearInterval(this.#gameRef);
@@ -107,8 +100,9 @@ export class Engine {
 	}
 
 	#levelUp = () => {
-		this.#character.increaseSnakeBody();
-		this.#score += this.#score >= 2000 ? 200 : 100;
+		// this.#character.increaseSnakeBody();
+		this.#character.increaseSnakeBody(this.#character.body[0].x, this.#character.body[0].y)
+		this.#score += this.#score <= 1000 ? 100 : Math.floor(this.#score / 1000) * 100;
 		this.#powerUpEaten += 1;
 		this.#updateDifficulty();
 		this.#gameInterface.updatePageField('apple', this.#powerUpEaten);
@@ -116,14 +110,21 @@ export class Engine {
 	}
 
 	#redrawScreen = (character, powerUp, enemy) => {
-
-		// Draw snake and apple
-		powerUp.forEach((object, index) => drawPowerUp(this.screen, object, index));
-		character.body.forEach((partOfBody, index) => drawCharacter(this.screen, partOfBody, index));
+		// console.time('redrawScreen');
+		this.#gameInterface.clearScreenToGameAction();
 
 		// Recreates the apple if it was eaten
 		if (powerUp.length === 0) {
-			powerUp.push(new PowerUp(this.square));
+			powerUp.push(new PowerUp());
+		}
+
+		// Draw snake and apple
+		drawPowerUp(this.screen, powerUp[0]);
+
+		// character.body.forEach((partOfBody, index) => drawCharacter(this.screen, partOfBody, index));
+		// no forEach for more performance
+		for (let index = character.body.length - 1; index >= 0; index--) {
+			drawCharacter(this.screen, character.body[index], index);
 		}
 
 		// Test the collision of the snake's head on power-up
@@ -134,18 +135,12 @@ export class Engine {
 		}
 
 		// Test the collision
-		if(
-			// collision of the snake and wall
-			this.#testWallCollision(character) ||
-			// collision of the snake's head on her body
-			(character.body.some((partOfBody, index) =>
-				index > 0 && this.#testCollision(character.body[0], partOfBody))
-			)
-		) {
+		if(this.#testWallCollision(character) || this.#testCollisionWithMySelf(character)) {
 			this.gameOver();
 		}
 
 		character.updateSnakeMovement(this.#charDirection);
+		// console.timeEnd('redrawScreen');
 	}
 
 	gameOver = () => {
@@ -170,7 +165,6 @@ export class Engine {
 
 	startGame = () => {
 		this.#gameRef = setInterval(() => {
-			this.#gameInterface.clearScreenToGameAction();
 			this.#redrawScreen(this.#character, this.#powerUp);
 		}, this.#speed);
 	}

@@ -1,18 +1,12 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from './main.js';
-import { GameInterface } from './GameInterface.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, CANVAS_SIZE, BOX } from './main.js';
 
 export class PowerUp {
 
-	constructor(size = 20, color = 'orange') {
+	constructor(color = 'orange') {
 
 		this.color = color;
-		this.width = size;
-		this.height = size;
-
-		// normal way
-		// let max = (CANVAS_WIDTH/20) + 1;
-		// this.x = this.width * (Math.floor(Math.random()) * max);
-		// this.y = this.height * (Math.floor(Math.random()) * max);
+		this.width = BOX;
+		this.height = BOX;
 
 		let random;
 

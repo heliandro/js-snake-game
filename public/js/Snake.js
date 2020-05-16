@@ -1,18 +1,16 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from './main.js';
-import { GameInterface } from './GameInterface.js';
+import { BOX } from './main.js';
 
 export class Snake {
 
 	#body = [];
-	#bodyPart = { height: 0, width: 0, x: 0, y: 0, color: 'black'};
+	#bodyPart = { height: 0, width: 0, x: 0, y: 0, color: 'green'};
 	#previousDirection = '';
 
-	constructor(size = 20) {
-		this.#bodyPart = { ...this.#bodyPart, height: size, width: size };
+	constructor() {
+		this.#bodyPart = { ...this.#bodyPart, height: BOX, width: BOX };
 		this.#body = [
-			{ ...this.#bodyPart, x: 140, y: 140, color: 'purple' },
+			{ ...this.#bodyPart, x: 140, y: 140, color: 'darkgreen' },
 			{ ...this.#bodyPart, x: 120, y: 140 },
-			{ ...this.#bodyPart, x: 100, y: 140 }
 		];
 	}
 
@@ -20,112 +18,112 @@ export class Snake {
 		return this.#body;
 	};
 
-	get previousDirection() {
-		return this.#previousDirection;
+	decrementSnakeBody = () => {
+		this.#body.pop();
 	}
 
-	set previousDirection(direction) {
-		this.#previousDirection = direction;
+	increaseSnakeBody = (x, y) => {
+		// this.#body.push(
+		// 	{
+		// 		...this.#bodyPart,
+		// 		x: this.body[this.body.length-1].x - (this.#bodyPart.width),
+		// 		y: this.body[this.body.length-1].y
+		// 	}
+		// );
+		this.#body.unshift({
+			...this.#bodyPart,
+			x,
+			y
+		})
 	}
 
-	updateBodyPart = (pos, x, y)  => {
-		this.#body[pos].x = x ?? this.#body[pos].x;
-		this.#body[pos].y = y ?? this.#body[pos].y;
+	#moveToRight = (index) => {
+		this.#previousDirection = 'right';
+		this.#body[index].x = index == 0 ? (this.#body[index].x + this.#bodyPart.width) : this.#body[index-1].x;
+		this.#body[index].y = index == 0 ? this.#body[index].y : this.#body[index-1].y;
 	}
 
-	increaseSnakeBody = () => {
-		this.#body.push(
-			{
-				...this.#bodyPart,
-				x: this.body[this.body.length-1].x - (this.#bodyPart.width),
-				y: this.body[this.body.length-1].y
-			}
-		);
+	#moveToLeft = (index) => {
+		this.#previousDirection = 'left';
+		this.#body[index].x = index == 0 ? (this.#body[index].x - this.#bodyPart.width) : this.#body[index-1].x;
+		this.#body[index].y = index == 0 ? this.#body[index].y : this.#body[index-1].y;
 	}
 
-	// colisão com as bordas da tela
-	#checkSnakePosition = () => {
-		if (this.#body[0].x + this.#body[0].width > CANVAS_WIDTH - this.#bodyPart.width) {
-			this.updateBodyPart(0, this.#bodyPart.width);
-		}
-		if (this.#body[0].x + this.#body[0].width < this.#bodyPart.width) {
-			this.updateBodyPart(0, CANVAS_WIDTH - this.#bodyPart.width);
-		}
-		if (this.#body[0].y + this.#body[0].height > CANVAS_HEIGHT - this.#bodyPart.height) {
-			this.updateBodyPart(0, null, this.#bodyPart.height);
-		}
-		if (this.#body[0].y + this.#body[0].height < this.#bodyPart.height) {
-			this.updateBodyPart(0, null, CANVAS_HEIGHT - this.#bodyPart.height);
-		}
+	#moveToUp = (index) => {
+		this.#previousDirection = 'up';
+		this.#body[index].x = index == 0 ? this.#body[index].x : this.#body[index-1].x;
+		this.#body[index].y = index == 0 ? (this.#body[index].y - this.#bodyPart.height): this.#body[index-1].y;
 	}
 
-	#moveToRight = (i) => {
-		this.previousDirection = 'right';
-		this.#body[i].x = i == 0 ? this.#body[i].x + (this.#bodyPart.width) : this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y : this.#body[i-1].y;
-	}
-
-	#moveToLeft = (i) => {
-		this.previousDirection = 'left';
-		this.#body[i].x = i == 0 ? this.#body[i].x - (this.#bodyPart.width) : this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y : this.#body[i-1].y;
-	}
-
-	#moveToUp = (i) => {
-		this.previousDirection = 'up';
-		this.#body[i].x = i == 0 ? this.#body[i].x : this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y - (this.#bodyPart.height): this.#body[i-1].y;
-	}
-
-	#moveToDown = (i) => {
-		this.previousDirection = 'down';
-		this.#body[i].x = i == 0 ? this.#body[i].x: this.#body[i-1].x;
-		this.#body[i].y = i == 0 ? this.#body[i].y + (this.#bodyPart.height): this.#body[i-1].y;
+	#moveToDown = (index) => {
+		this.#previousDirection = 'down';
+		this.#body[index].x = index == 0 ? this.#body[index].x: this.#body[index-1].x;
+		this.#body[index].y = index == 0 ? (this.#body[index].y + this.#bodyPart.height): this.#body[index-1].y;
 	}
 
 	updateSnakeMovement = (direction) => {
-		// this.#checkSnakePosition();
+		// console.time('Snake moviment');
+		//for (let index = this.body.length-1; index >= 0; index--) {
 
-		for (let i = this.body.length-1; i >= 0; i--) {
+		this.decrementSnakeBody();
 
-			switch (direction) {
+		let snakeX = this.#body[0].x;
+		let snakeY = this.#body[0].y;
 
-				case 'left': {
-					if (this.#previousDirection === 'right') {
-						this.#moveToRight(i);
-					} else {
-						this.#moveToLeft(i);
-					}
-					break;
+		switch (direction) {
+
+			case 'left': {
+				if (this.#previousDirection === 'right') {
+					// this.#moveToRight(index);
+					snakeX += BOX;
+				} else {
+					// this.#moveToLeft(index);
+					this.#previousDirection = 'left';
+					snakeX -= BOX;
 				}
+				break;
+			}
 
-				case 'right': {
-					if (this.#previousDirection === 'left') {
-						this.#moveToLeft(i);
-					} else {
-						this.#moveToRight(i);
-					}
-					break;
+			case 'right': {
+				if (this.#previousDirection === 'left') {
+					// this.#moveToLeft(index);
+					snakeX -= BOX;
+				} else {
+					// this.#moveToRight(index);
+					this.#previousDirection = 'right';
+					snakeX += BOX;
 				}
+				break;
+			}
 
-				case 'up': {
-					if (this.#previousDirection === 'down') {
-						this.#moveToDown(i);
-					} else {
-						this.#moveToUp(i);
-					}
-					break;
+			case 'up': {
+				if (this.#previousDirection === 'down') {
+					// this.#moveToDown(index);
+					snakeY += BOX;
+				} else {
+					// this.#moveToUp(index);
+					this.#previousDirection = 'up';
+					snakeY -= BOX;
 				}
+				break;
+			}
 
-				case 'down': {
-					if (this.#previousDirection === 'up') {
-						this.#moveToUp(i);
-					} else {
-						this.#moveToDown(i);
-					}
-					break;
+			case 'down': {
+				if (this.#previousDirection === 'up') {
+					// this.#moveToUp(index);
+					snakeY -= BOX;
+				} else {
+					// this.#moveToDown(index);
+					this.#previousDirection = 'down';
+					snakeY += BOX;
 				}
+				break;
 			}
 		}
+
+		// this.#body[0].x = snakeX; this.#body[0].y = snakeY;
+		this.increaseSnakeBody(snakeX, snakeY);
+		// }
+		// console.timeEnd('Snake moviment');
 	};
 }

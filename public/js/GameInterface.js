@@ -1,12 +1,10 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from './main.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, CANVAS_SIZE, BOX } from './main.js';
 
 export class GameInterface {
 
 	#appleField;
 	#scoreField;
 	#speedField;
-	square = 20;
-	#canvasSize = 16;
 
 	constructor(screen) {
 		this.screen = screen;
@@ -39,36 +37,20 @@ export class GameInterface {
 		this.screen.textAlign = 'center';
 		this.screen.fillText('SNAKE GAME', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
 		this.screen.font = '14px Arial';
-		this.screen.fillText('> Press Space OR Touch <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
-		this.screen.restore();
-	}
-
-	clearScreenToDefault = () => {
-		this.screen.fillStyle = 'burlywood';
-		this.screen.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-		this.screen.fillRect(
-			0,
-			0,
-			CANVAS_WIDTH,
-			CANVAS_HEIGHT
-		);
-		this.screen.save();
-
-		this.screen.fillStyle = 'darkseagreen';
-
-		this.screen.fillRect(
-			0,//this.square,
-			0,//this.square,
-			this.#canvasSize * this.square - this.square,
-			this.#canvasSize * this.square - this.square
-		);
-
+		this.screen.fillText('> Press Space to start <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
+		this.screen.fillText('* Controls: Keyboard arrows', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 60);
 		this.screen.restore();
 	}
 
 	clearScreenToGameAction = () => {
-		this.clearScreenToDefault();
-		// this.screen.fillStyle = 'darkseagreen';
+		this.screen.fillStyle = 'darkseagreen';
+
+		this.screen.fillRect(
+			0,
+			0,
+			(CANVAS_SIZE * BOX) - BOX,
+			(CANVAS_SIZE * BOX) - BOX
+		);
 	}
 
 	drawGameOverScreen() {
@@ -82,7 +64,7 @@ export class GameInterface {
 		this.screen.textAlign = 'center';
 		this.screen.fillText('Game Over', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
 		this.screen.font = '14px Arial';
-		this.screen.fillText('> press Space OR Touch to continue... <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
+		this.screen.fillText('> press Space to continue... <', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
 
 		this.screen.restore();
 	}

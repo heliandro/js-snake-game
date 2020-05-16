@@ -1,7 +1,7 @@
 const drawCharacter = (context, partOfBody, index) => {
 	context.save();
 
-	context.fillStyle = partOfBody.color;
+	context.fillStyle = index === 0 ? 'darkgreen' : partOfBody.color;
 	context.fillRect(partOfBody.x, partOfBody.y, partOfBody.width, partOfBody.height);
 
 	context.restore();
